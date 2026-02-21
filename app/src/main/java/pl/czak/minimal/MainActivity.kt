@@ -1,16 +1,28 @@
 package pl.czak.minimal
 
-import android.app.Activity
 import android.os.Bundle
-import android.widget.TextView
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 
-class MainActivity : Activity() {
+class MainActivity : ComponentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val label = TextView(this)
-        label.text = "Hello world!"
-
-        setContentView(label)
+        setContent {
+            MaterialTheme {
+                Box(
+                    modifier = Modifier.fillMaxSize().systemBarsPadding(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Hello world!")
+                }
+            }
+        }
     }
 }
