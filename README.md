@@ -1,12 +1,13 @@
 # minimal-android-project
 
 This repository explores how simple it can be to set up a valid,
-working Android project with **Jetpack Compose + Material 3**. You will need:
+working Android project with **Kotlin + Jetpack Compose + Material 3**. You will need:
 
 * One `.kt` activity source file
+* One `.kt` material3 theme source file
 * One `AndroidManifest.xml`
-* Two theme files (`res/values/themes.xml` and `res/values-night/themes.xml`)
-* One `app/build.gradle.kts` (no root build.gradle)
+* Two theme resource files (`res/values/themes.xml` and `res/values-night/themes.xml`)
+* One `app/build.gradle.kts` (no root `build.gradle.kts`)
 * One `settings.gradle.kts`
 
 ## Project structure
@@ -23,11 +24,81 @@ project
              │   └── pl
              │       └── czak
              │           └── minimal
-             │               └── MainActivity.kt
+             │               ├── MainActivity.kt
+             |               └── Theme.kt
              └── res
                  └── values
                      ├── themes.xml
                      └── themes.xml (in values-night/)
+```
+
+## AndroidManifest.xml
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
+        android:label="minimal-android-project"
+        android:theme="@style/Theme.Minimal"
+        android:icon="@android:drawable/sym_def_app_icon">
+        <activity android:name="MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+```
+
+## MainActivity.kt
+
+```kotlin
+class MainActivity : ComponentActivity() {
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            AdaptiveTheme {
+                Text(
+                    text = "Hello world!",
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center)
+                )
+            }
+        }
+    }
+}
+```
+
+## Theme.kt
+
+```kotlin
+@Composable
+fun AdaptiveTheme(
+    context: Context = LocalContext.current,
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = true,
+    content: @Composable () -> Unit
+) {
+    // Verify Dynamic Color support (Android 12+)
+    val supportsDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
+    // Define colors based on the selected theme
+    val colorScheme = when {
+        dynamicColor && supportsDynamicColor && darkTheme -> dynamicDarkColorScheme(context)
+        dynamicColor && supportsDynamicColor && !darkTheme -> dynamicLightColorScheme(context)
+        darkTheme -> darkColorScheme()
+        else -> lightColorScheme()
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        content = content,
+    )
+}
 ```
 
 ## Theme files
@@ -49,52 +120,6 @@ project
 ```
 
 These XML themes only remove the ActionBar. Colors are handled by Compose.
-
-## AndroidManifest.xml
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application 
-        android:label="minimal-android-project"
-        android:theme="@style/Theme.Minimal">
-        <activity 
-            android:name="MainActivity" 
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-    </application>
-</manifest>
-```
-
-## MainActivity.kt
-
-```kotlin
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            MaterialTheme(
-                colorScheme = when {
-                    Build.VERSION.SDK_INT >= 31 -> dynamicLightColorScheme(this)
-                    else -> lightColorScheme()
-                }
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize().systemBarsPadding(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("Hello world!")
-                }
-            }
-        }
-    }
-}
-```
-
 ### How colors work:
 - **Android 12+ (API 31+)**: App uses system dynamic colors (from wallpaper)
 - **Android < 12**: App uses Material 3 default colors
