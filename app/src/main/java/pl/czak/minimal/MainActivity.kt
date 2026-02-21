@@ -1,5 +1,6 @@
 package pl.czak.minimal
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
@@ -15,7 +18,12 @@ class MainActivity : ComponentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            MaterialTheme(
+                colorScheme = when {
+                    Build.VERSION.SDK_INT >= 31 -> dynamicLightColorScheme(this)
+                    else -> lightColorScheme()
+                }
+            ) {
                 Box(
                     modifier = Modifier.fillMaxSize().systemBarsPadding(),
                     contentAlignment = Alignment.Center
