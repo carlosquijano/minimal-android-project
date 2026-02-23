@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
 ### How colors work:
 - **Android 12+ (API 31+)**: App uses system dynamic colors (from wallpaper)
 - **Android < 12**: App uses Material 3 default colors
-- **Dark/Light mode**: Automatically handled by `dynamicLightColorScheme()` and `lightColorScheme()`
+- **Dark/Light mode**: Automatically handled by MaterialTheme
 - XML themes only remove ActionBar — colors are controlled by Compose
 
 ## How to build
@@ -158,6 +158,7 @@ Why 100% coverage is possible
 - Colors are handled entirely by Compose — XML themes only control the ActionBar.
 - Version catalog TOML file makes it easy to update dependencies.
 - AGP 9.0.1 works best with **Android Studio Otter 3 Feature Drop (2025.2.3) or newer**, but you can use any IDE that supports Gradle builds.
+- Repository is set up as a **GitHub template**. Use the "Use this template" button to create new projects with the same minimal structure and 100% test coverage already configured.
 
 ## Contact
 
