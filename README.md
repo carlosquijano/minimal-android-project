@@ -9,11 +9,13 @@ working Android project with **Kotlin + Jetpack Compose + Material 3**. You will
 * Two theme resource files (`res/values/themes.xml` and `res/values-night/themes.xml`)
 * One `app/build.gradle.kts` (no root `build.gradle.kts`)
 * One `settings.gradle.kts`
+* One `versions.toml` gradle catalog file 
 
 ## Project structure
 
 ```
 project
+ ├── versions.toml
  ├── settings.gradle.kts
  └── app
      ├── build.gradle.kts
