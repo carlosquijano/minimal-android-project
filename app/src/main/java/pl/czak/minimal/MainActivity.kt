@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AdaptiveTheme {
+            MaterialTheme {
                 Text(
                     text = "Hello world!",
                     style = MaterialTheme.typography.displaySmall,
