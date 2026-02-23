@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "pl.czak.minimal"
+    namespace = "io.github.carlosquijano.minimal"
     compileSdk = 36
     defaultConfig { minSdk = 23; targetSdk = 36 }
     buildFeatures { compose = true }
@@ -17,5 +17,4 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.activity.compose)
     androidTestImplementation(libs.androidx.compose.ui.test)
-    androidTestImplementation(libs.androidx.compose.ui.test.manifest)
 }
