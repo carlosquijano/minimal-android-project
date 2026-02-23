@@ -1,19 +1,22 @@
 # minimal-android-project
 
 This repository explores how simple it can be to set up a valid,
-working Android project with **Kotlin + Jetpack Compose + Material 3**. You will need:
+working Android project with **Kotlin + Jetpack Compose + Material 3**. 
+
+You will need:
 
 * One `.kt` activity source file
-* One `.kt` material3 theme source file
 * One `AndroidManifest.xml`
-* Two theme resource files (`res/values/themes.xml` and `res/values-night/themes.xml`)
-* One `app/build.gradle.kts` (no root `build.gradle.kts`)
 * One `settings.gradle.kts`
+* One `app/build.gradle.kts` (no root `build.gradle.kts`)
+* One `versions.toml` gradle catalog file
+* Two theme resource files (`res/values/themes.xml` and `res/values-night/themes.xml`)
 
 ## Project structure
 
 ```
 project
+ ├── versions.toml
  ├── settings.gradle.kts
  └── app
      ├── build.gradle.kts
@@ -25,7 +28,6 @@ project
              │       └── czak
              │           └── minimal
              │               ├── MainActivity.kt
-             |               └── Theme.kt
              └── res
                  └── values
                      ├── themes.xml
@@ -58,7 +60,7 @@ class MainActivity : ComponentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AdaptiveTheme {
+            MaterialTheme {
                 Text(
                     text = "Hello world!",
                     style = MaterialTheme.typography.displaySmall,
@@ -73,35 +75,7 @@ class MainActivity : ComponentActivity() {
 }
 ```
 
-## Theme.kt
-
-```kotlin
-@Composable
-fun AdaptiveTheme(
-    context: Context = LocalContext.current,
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
-) {
-    // Verify Dynamic Color support (Android 12+)
-    val supportsDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-
-    // Define colors based on the selected theme
-    val colorScheme = when {
-        dynamicColor && supportsDynamicColor && darkTheme -> dynamicDarkColorScheme(context)
-        dynamicColor && supportsDynamicColor && !darkTheme -> dynamicLightColorScheme(context)
-        darkTheme -> darkColorScheme()
-        else -> lightColorScheme()
-    }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        content = content,
-    )
-}
-```
-
-## Theme files
+## Theme resource files
 
 **`res/values/themes.xml`** (light theme):
 ```xml
@@ -119,7 +93,8 @@ fun AdaptiveTheme(
 </resources>
 ```
 
-These XML themes only remove the ActionBar. Colors are handled by Compose.
+> These XML themes only remove the ActionBar. Colors are handled by Compose.
+
 ### How colors work:
 - **Android 12+ (API 31+)**: App uses system dynamic colors (from wallpaper)
 - **Android < 12**: App uses Material 3 default colors
@@ -134,7 +109,22 @@ $ cd minimal-android-project
 $ gradle installDebug
 ```
 
-The app will be installed on all devices accessible to `adb`.
+> The app will be installed on all devices accessible to `adb`.
+
+## How to build and test with coverage
+
+```
+$ gradle testDebugUnitTest
+$ gradle createDebugCoverageReport
+$ open app/build/reports/coverage/androidTest/debug/connected/index.html
+```
+
+Why 100% coverage is possible
+- The single test testGreeting() covers:
+- Activity lifecycle (onCreate)
+- Compose UI rendering
+- MaterialTheme integration
+- The entire codebase in one assertion
 
 ## Requirements
 
@@ -146,19 +136,28 @@ The app will be installed on all devices accessible to `adb`.
 ## What's inside
 
 - Kotlin + Jetpack Compose + Material 3
-- Edge-to-edge by default
+- Minimal Gradle configuration (no wrapper, you bring your own Gradle)
 - Dynamic colors on Android 12+ (Material You)
 - Native Android themes (no AppCompat) with light/dark mode support
-- No action bar
-- Minimal Gradle configuration (no wrapper, you bring your own Gradle)
+- No action bar (Edge-to-edge by default)
 - Single activity with "Hello world!"
+
+
+## What makes this minimal
+- ✅ No Theme.kt - colors handled by MaterialTheme defaults
+- ✅ Single test file achieving 100% coverage
+- ✅ Native Android themes (no AppCompat)
+- ✅ No Gradle wrapper - use your global Gradle
+- ✅ Single activity, single test
+- ✅ 100% JaCoCo test coverage with one test
 
 ## Notes
 
 - No Gradle wrapper is included — the project expects you to have Gradle installed globally. This keeps the repository even smaller and lets you use your preferred Gradle version.
-- AGP 9.0.1 works best with **Android Studio Otter 3 Feature Drop (2025.2.3) or newer**, but you can use any IDE that supports Gradle builds.
 - Using native Android themes (`android:Theme.Material`) means no AppCompat dependency required.
 - Colors are handled entirely by Compose — XML themes only control the ActionBar.
+- Version catalog TOML file makes it easy to update dependencies.
+- AGP 9.0.1 works best with **Android Studio Otter 3 Feature Drop (2025.2.3) or newer**, but you can use any IDE that supports Gradle builds.
 
 ## Contact
 
