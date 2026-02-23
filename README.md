@@ -6,6 +6,7 @@ working Android project with **Kotlin + Jetpack Compose + Material 3**.
 You will need:
 
 * One `.kt` activity source file
+* One `.kt` activity source test file
 * One `AndroidManifest.xml`
 * One `settings.gradle.kts`
 * One `app/build.gradle.kts` (no root `build.gradle.kts`)
@@ -21,17 +22,17 @@ project
  └── app
      ├── build.gradle.kts
      └── src
-         └── main
-             ├── AndroidManifest.xml
-             ├── java
-             │   └── io.github
-             │       └── carlosquijano
-             │           └── minimal
-             │               ├── MainActivity.kt
-             └── res
-                 └── values
-                     ├── themes.xml
-                     └── themes.xml (in values-night/)
+         ├── main
+         │   ├── AndroidManifest.xml
+         │   ├── java/io/github/carlosquijano/minimal
+         │   │   └── MainActivity.kt
+         │   └── res
+         │       └── values
+         │           ├── themes.xml
+         │           └── themes.xml (in values-night/)
+         └── androidTest
+             └── java/io/github/carlosquijano/minimal
+                 └── MainActivityTest.kt
 ```
 
 ## AndroidManifest.xml
