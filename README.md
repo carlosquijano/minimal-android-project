@@ -24,8 +24,8 @@ project
          └── main
              ├── AndroidManifest.xml
              ├── java
-             │   └── pl
-             │       └── czak
+             │   └── io.github
+             │       └── carlosquijano
              │           └── minimal
              │               ├── MainActivity.kt
              └── res
