@@ -1,11 +1,12 @@
 # minimal-android-project
 
 This repository explores how simple it can be to set up a valid,
-working Android project with **Kotlin + Jetpack Compose + Material 3**. 
+working Android project with **Kotlin + Jetpack Compose + Material 3**.
 
 You will need:
 
 * One `.kt` activity source file
+* One `.kt` activity source test file
 * One `AndroidManifest.xml`
 * One `settings.gradle.kts`
 * One `app/build.gradle.kts` (no root `build.gradle.kts`)
@@ -21,17 +22,17 @@ project
  └── app
      ├── build.gradle.kts
      └── src
-         └── main
-             ├── AndroidManifest.xml
-             ├── java
-             │   └── io.github
-             │       └── carlosquijano
-             │           └── minimal
-             │               ├── MainActivity.kt
-             └── res
-                 └── values
-                     ├── themes.xml
-                     └── themes.xml (in values-night/)
+         ├── main
+         │   ├── AndroidManifest.xml
+         │   ├── java/io/github/carlosquijano/minimal
+         │   │   └── MainActivity.kt
+         │   └── res
+         │       └── values
+         │           ├── themes.xml
+         │           └── themes.xml (in values-night/)
+         └── test
+             └── java/io/github/carlosquijano/minimal
+                 └── MainActivityTest.kt
 ```
 
 ## AndroidManifest.xml
@@ -60,7 +61,16 @@ class MainActivity : ComponentActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            val darkTheme = isSystemInDarkTheme()
+            val supportsDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+            val colorScheme = when {
+                supportsDynamicColor && darkTheme -> dynamicDarkColorScheme(this)
+                supportsDynamicColor && !darkTheme -> dynamicLightColorScheme(this)
+                darkTheme -> darkColorScheme()
+                else -> lightColorScheme()
+            }
+
+            MaterialTheme(colorScheme = colorScheme) {
                 Text(
                     text = "Hello world!",
                     style = MaterialTheme.typography.displaySmall,
@@ -85,7 +95,7 @@ class MainActivity : ComponentActivity() {
 </resources>
 ```
 
-**`res/values-night/themes.xml`** (dark theme):
+**`res/values-night/themes.xml** (dark theme):
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
@@ -101,30 +111,69 @@ class MainActivity : ComponentActivity() {
 - **Dark/Light mode**: Automatically handled by MaterialTheme
 - XML themes only remove ActionBar — colors are controlled by Compose
 
+## Testing with Robolectric
+
+This project uses **Robolectric** for fast, reliable unit tests without emulators:
+
+- ✅ **4 tests** covering all theme combinations (light/dark, low/high API)
+- ✅ **100% line and branch coverage**
+- ✅ **No emulator needed** - runs in seconds on JVM
+
+### MainActivityTest.kt
+
+```kotlin
+class MainActivityTest {
+    @get:Rule
+    val composeTestRule = createAndroidComposeRule<MainActivity>()
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.M])
+    fun testLowApi_lightTheme() {
+        composeTestRule.onNodeWithText("Hello world!").assertExists()
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.M], qualifiers = "night")
+    fun testLowApi_darkTheme() {
+        composeTestRule.onNodeWithText("Hello world!").assertExists()
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.S])
+    fun testHighApi_lightTheme() {
+        composeTestRule.onNodeWithText("Hello world!").assertExists()
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.S], qualifiers = "night")
+    fun testHighApi_darkTheme() {
+        composeTestRule.onNodeWithText("Hello world!").assertExists()
+    }
+}
+```
+
 ## How to build
 
-```
-$ git clone https://github.com/carlosquijano/minimal-android-project.git
-$ cd minimal-android-project
-$ gradle installDebug
+```bash
+git clone https://github.com/carlosquijano/minimal-android-project.git
+cd minimal-android-project
+gradle installDebug
 ```
 
 > The app will be installed on all devices accessible to `adb`.
 
-## How to build and test with coverage
+## How to run tests and coverage
 
-```
-$ gradle testDebugUnitTest
-$ gradle createDebugCoverageReport
-$ open app/build/reports/coverage/androidTest/debug/connected/index.html
-```
+```bash
+# Run unit tests (fast, no emulator needed)
+gradle testDebugUnitTest
 
-Why 100% coverage is possible
-- The single test testGreeting() covers:
-- Activity lifecycle (onCreate)
-- Compose UI rendering
-- MaterialTheme integration
-- The entire codebase in one assertion
+# Generate coverage report (using Kover)
+gradle koverHtmlReportDebug
+
+# Open coverage report
+open app/build/reports/kover/html/debug/index.html
+```
 
 ## Requirements
 
@@ -141,15 +190,19 @@ Why 100% coverage is possible
 - Native Android themes (no AppCompat) with light/dark mode support
 - No action bar (Edge-to-edge by default)
 - Single activity with "Hello world!"
-
+- **Robolectric** for fast unit tests
+- **Kover** for 100% coverage reporting
 
 ## What makes this minimal
+
 - ✅ No Theme.kt - colors handled by MaterialTheme defaults
-- ✅ Single test file achieving 100% coverage
+- ✅ **4 tests achieving 100% coverage** (all theme combinations)
 - ✅ Native Android themes (no AppCompat)
 - ✅ No Gradle wrapper - use your global Gradle
-- ✅ Single activity, single test
-- ✅ 100% JaCoCo test coverage with one test
+- ✅ Single activity
+- ✅ **Robolectric instead of emulator tests** (faster, no AVD needed)
+- ✅ **Kover** for simple coverage (no JaCoCo configuration)
+- ✅ Version catalog for dependency management
 
 ## Notes
 
@@ -157,6 +210,8 @@ Why 100% coverage is possible
 - Using native Android themes (`android:Theme.Material`) means no AppCompat dependency required.
 - Colors are handled entirely by Compose — XML themes only control the ActionBar.
 - Version catalog TOML file makes it easy to update dependencies.
+- **Tests use Robolectric** - runs in seconds without emulators
+- **Coverage uses Kover** - simpler than JaCoCo, works out of the box
 - AGP 9.0.1 works best with **Android Studio Otter 3 Feature Drop (2025.2.3) or newer**, but you can use any IDE that supports Gradle builds.
 - Repository is set up as a **GitHub template**. Use the "Use this template" button to create new projects with the same minimal structure and 100% test coverage already configured.
 
