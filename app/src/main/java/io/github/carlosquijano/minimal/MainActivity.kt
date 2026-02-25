@@ -39,10 +39,14 @@ class MainActivity : ComponentActivity() {
             val darkTheme = isSystemInDarkTheme()
             val supportsDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             val colorScheme = when {
-                supportsDynamicColor && darkTheme -> dynamicDarkColorScheme(this)
-                supportsDynamicColor && !darkTheme -> dynamicLightColorScheme(this)
-                darkTheme -> darkColorScheme()
-                else -> lightColorScheme()
+                supportsDynamicColor -> {
+                    if (darkTheme) dynamicDarkColorScheme(this)
+                    else dynamicLightColorScheme(this)
+                }
+                else -> {
+                    if (darkTheme) darkColorScheme()
+                    else lightColorScheme()
+                }
             }
 
             MaterialTheme(colorScheme = colorScheme) {
