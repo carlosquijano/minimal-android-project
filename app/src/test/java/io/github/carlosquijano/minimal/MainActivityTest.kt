@@ -16,25 +16,25 @@ class MainActivityTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.M])
-    fun testLowApi_lightTheme() {
+    fun `test low API level with light theme`() {
         assertTextNodeExists()
     }
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.M], qualifiers = "night")
-    fun testLowApi_darkTheme() {
+    fun `test low API level with dark theme`() {
         assertTextNodeExists()
     }
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.S])
-    fun testHighApi_lightTheme() {
+    fun `test high API level with light theme`() {
         assertTextNodeExists()
     }
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.S], qualifiers = "night")
-    fun testHighApi_darkTheme() {
+    fun `test high API level with dark theme`() {
         assertTextNodeExists()
     }
 

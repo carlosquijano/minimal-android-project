@@ -128,26 +128,26 @@ class MainActivityTest {
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.M])
-    fun testLowApi_lightTheme() {
-        composeTestRule.onNodeWithText("Hello world!").assertExists()
+    fun `test low API level with light theme`() {
+        assertTextNodeExists()
     }
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.M], qualifiers = "night")
-    fun testLowApi_darkTheme() {
-        composeTestRule.onNodeWithText("Hello world!").assertExists()
+    fun `test low API level with dark theme`() {
+        assertTextNodeExists()
     }
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.S])
-    fun testHighApi_lightTheme() {
-        composeTestRule.onNodeWithText("Hello world!").assertExists()
+    fun `test high API level with light theme`() {
+        assertTextNodeExists()
     }
 
     @Test
     @Config(sdk = [Build.VERSION_CODES.S], qualifiers = "night")
-    fun testHighApi_darkTheme() {
-        composeTestRule.onNodeWithText("Hello world!").assertExists()
+    fun `test high API level with dark theme`() {
+        assertTextNodeExists()
     }
 }
 ```
@@ -172,7 +172,7 @@ gradle testDebugUnitTest
 gradle koverHtmlReportDebug
 
 # Open coverage report
-open app/build/reports/kover/html/debug/index.html
+open app/build/reports/kover/htmlDebug/index.html
 ```
 
 ## Requirements
