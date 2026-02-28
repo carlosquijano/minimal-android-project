@@ -212,7 +212,7 @@ open app/build/reports/kover/htmlDebug/index.html
 - Version catalog TOML file makes it easy to update dependencies.
 - **Tests use Robolectric** - runs in seconds without emulators
 - **Coverage uses Kover** - simpler than JaCoCo, works out of the box
-- AGP 9.0.1 works best with **Android Studio Otter 3 Feature Drop (2025.2.3) or newer**, but you can use any IDE that supports Gradle builds.
+- AGP 9.0.1 works best with **Android Studio Panda 1 | 2025.3.1 Patch 1** or newer**, but you can use any IDE that supports Gradle builds.
 - Repository is set up as a **GitHub template**. Use the "Use this template" button to create new projects with the same minimal structure and 100% test coverage already configured.
 
 ## Contact
